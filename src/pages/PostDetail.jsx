@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, useNavigation } from "react-router-dom";
 import api from "../api/axios";
 import RelatedPosts from "../components/RelatedPosts";
 import Comments from "../components/Comments";
@@ -9,12 +9,11 @@ const PostDetail = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
-  const fetched = useRef(false);
-
+  // const fetched = useRef(false);
   useEffect(() => {
-    if (fetched.current) return;
-    fetched.current = true;
-
+    window.scrollTo(0, 0);
+  }, [slug]);
+  useEffect(() => {
     const fetchPost = async () => {
       try {
         const res = await api.get(`/posts/${slug}`);
@@ -42,7 +41,6 @@ const PostDetail = () => {
   return (
     <div className="bg-slate-900 px-4 py-12">
       <article className="max-w-3xl mx-auto bg-slate-800 border border-slate-700 rounded-xl shadow p-6 md:p-10">
-
         {/* Category + Status */}
         <div className="flex flex-wrap gap-2 mb-4">
           <Link
@@ -51,7 +49,6 @@ const PostDetail = () => {
           >
             {post.category}
           </Link>
-
         </div>
 
         {/* Title */}
@@ -75,7 +72,7 @@ const PostDetail = () => {
         {/* Tags */}
         {post.tags?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {post.tags.map(tag => (
+            {post.tags.map((tag) => (
               <span
                 key={tag}
                 className="px-2 py-1 text-xs rounded bg-slate-700 text-gray-300"
@@ -107,20 +104,16 @@ const PostDetail = () => {
             <span className="text-gray-200">
               {post.updatedAt
                 ? new Date(post.updatedAt).toLocaleDateString()
-              : "—"}
+                : "—"}
             </span>
           </p>
           <p>Post ID: {post._id}</p>
         </div>
-        <Comments postId={post._id}/>
-
+        <Comments postId={post._id} />
       </article>
       <div className="max-w-6xl mx-auto px-4">
-  <RelatedPosts
-    category={post.category}
-    slug={post.slug}
-  />
-</div>
+        <RelatedPosts category={post.category} slug={post.slug} />
+      </div>
     </div>
   );
 };

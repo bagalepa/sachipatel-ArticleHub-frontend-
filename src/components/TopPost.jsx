@@ -7,7 +7,18 @@ const TopPosts = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    api.get("/posts/top?limit=6").then(res => setPosts(res.data));
+    const fetchTopPosts = async () => {
+      try {
+        const res = await api.get("/posts/top?limit=6");
+        console.log("Top Posts Data:", res.data);
+        setPosts(res.data);
+      } catch (error) {
+        console.error("Failed to fetch top posts", error);
+        setPosts([]);
+      }
+    };
+
+    fetchTopPosts();
   }, []);
 
   if (posts.length === 0) return null;
@@ -15,16 +26,11 @@ const TopPosts = () => {
   return (
     <div className="min-h-screen bg-slate-900 px-4 py-10">
       <div className="max-w-6xl mx-auto">
-
         {/* Header */}
         <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-white">
-                Top Articles
-            </h2>
-            <div className="w-16 h-1 bg-orange-500 mx-auto mt-3 rounded" />
-            <p className="text-gray-400 mt-2">
-                Most read articles on ArticleHub
-            </p>
+          <h2 className="text-2xl font-bold text-white">Top Articles</h2>
+          <div className="w-16 h-1 bg-orange-500 mx-auto mt-3 rounded" />
+          <p className="text-gray-400 mt-2">Most read articles on ArticleHub</p>
         </div>
         {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,9 +45,7 @@ const TopPosts = () => {
 
         {/* Empty State */}
         {posts.length === 0 && (
-          <p className="text-gray-400 mt-10">
-            No articles published yet.
-          </p>
+          <p className="text-gray-400 mt-10">No articles published yet.</p>
         )}
       </div>
     </div>
